@@ -4,55 +4,48 @@ import android.content.Context
 import android.view.Surface
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 
-class IJKPlayerWrapper(private val context: Context) : VideoPlayer {
-    private var player: IjkMediaPlayer? = null
+class IJKPlayerWrapper(context: Context) : VideoPlayer {
+    private val player = IjkMediaPlayer()
 
     init {
         IjkMediaPlayer.loadLibrariesOnce(null)
         IjkMediaPlayer.native_profileBegin("libijkplayer.so")
+        
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1)
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1)
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1)
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 30000000)
     }
 
     override fun prepare(url: String) {
-        player = IjkMediaPlayer().apply {
-            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1)
-            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1)
-            setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0)
-            setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48)
-            dataSource = url
-            prepareAsync()
-        }
+        player.dataSource = url
+        player.prepareAsync()
     }
 
-    override fun start() {
-        player?.start()
+    override fun play() {
+        player.start()
     }
 
     override fun pause() {
-        player?.pause()
-    }
-
-    override fun stop() {
-        player?.stop()
-    }
-
-    override fun seekTo(position: Long) {
-        player?.seekTo(position)
+        player.pause()
     }
 
     override fun release() {
-        player?.release()
-        player = null
+        player.reset()
+        player.release()
     }
 
-    override fun getCurrentPosition(): Long = player?.currentPosition ?: 0L
+    override fun seekTo(positionMs: Long) {
+        player.seekTo(positionMs)
+    }
 
-    override fun getDuration(): Long = player?.duration ?: 0L
+    override fun getCurrentPosition(): Long = player.currentPosition
 
-    override fun isPlaying(): Boolean = player?.isPlaying ?: false
+    override fun getDuration(): Long = player.duration
+
+    override fun isPlaying(): Boolean = player.isPlaying
 
     fun setSurface(surface: Surface?) {
-        player?.setSurface(surface)
+        player.setSurface(surface)
     }
-
-    fun getPlayer(): IjkMediaPlayer? = player
 }

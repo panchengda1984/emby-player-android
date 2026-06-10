@@ -2,44 +2,39 @@ package com.emby.player.player
 
 import android.content.Context
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 
-class ExoPlayerWrapper(private val context: Context) : VideoPlayer {
-    private var player: ExoPlayer? = null
+class ExoPlayerWrapper(context: Context) : VideoPlayer {
+    private val player = ExoPlayer.Builder(context).build()
 
     override fun prepare(url: String) {
-        player = ExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri(url))
-            prepare()
-        }
+        val mediaItem = MediaItem.fromUri(url)
+        player.setMediaItem(mediaItem)
+        player.prepare()
     }
 
-    override fun start() {
-        player?.play()
+    override fun play() {
+        player.play()
     }
 
     override fun pause() {
-        player?.pause()
-    }
-
-    override fun stop() {
-        player?.stop()
-    }
-
-    override fun seekTo(position: Long) {
-        player?.seekTo(position)
+        player.pause()
     }
 
     override fun release() {
-        player?.release()
-        player = null
+        player.release()
     }
 
-    override fun getCurrentPosition(): Long = player?.currentPosition ?: 0L
+    override fun seekTo(positionMs: Long) {
+        player.seekTo(positionMs)
+    }
 
-    override fun getDuration(): Long = player?.duration ?: 0L
+    override fun getCurrentPosition(): Long = player.currentPosition
 
-    override fun isPlaying(): Boolean = player?.isPlaying ?: false
+    override fun getDuration(): Long = player.duration
 
-    fun getPlayer(): ExoPlayer? = player
+    override fun isPlaying(): Boolean = player.isPlaying
+
+    fun getPlayer(): Player = player
 }
