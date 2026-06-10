@@ -18,28 +18,26 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class PreferencesManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    private object PreferencesKeys {
-        val SERVER_URL = stringPreferencesKey("server_url")
-        val USER_ID = stringPreferencesKey("user_id")
-        val TOKEN = stringPreferencesKey("token")
-        val USERNAME = stringPreferencesKey("username")
-    }
+    private val serverUrlKey = stringPreferencesKey("server_url")
+    private val userIdKey = stringPreferencesKey("user_id")
+    private val tokenKey = stringPreferencesKey("token")
+    private val usernameKey = stringPreferencesKey("username")
 
-    val serverUrl: Flow<String?> = context.dataStore.data.map { it[PreferencesKeys.SERVER_URL] }
-    val userId: Flow<String?> = context.dataStore.data.map { it[PreferencesKeys.USER_ID] }
-    val token: Flow<String?> = context.dataStore.data.map { it[PreferencesKeys.TOKEN] }
-    val username: Flow<String?> = context.dataStore.data.map { it[PreferencesKeys.USERNAME] }
+    val serverUrl: Flow<String?> = context.dataStore.data.map { it[serverUrlKey] }
+    val userId: Flow<String?> = context.dataStore.data.map { it[userIdKey] }
+    val token: Flow<String?> = context.dataStore.data.map { it[tokenKey] }
+    val username: Flow<String?> = context.dataStore.data.map { it[usernameKey] }
 
     suspend fun saveLoginInfo(serverUrl: String, userId: String, token: String, username: String) {
         context.dataStore.edit { prefs ->
-            prefs[PreferencesKeys.SERVER_URL] = serverUrl
-            prefs[PreferencesKeys.USER_ID] = userId
-            prefs[PreferencesKeys.TOKEN] = token
-            prefs[PreferencesKeys.USERNAME] = username
+            prefs[serverUrlKey] = serverUrl
+            prefs[userIdKey] = userId
+            prefs[tokenKey] = token
+            prefs[usernameKey] = username
         }
     }
 
-    suspend fun clear() {
+    suspend fun clearLoginInfo() {
         context.dataStore.edit { it.clear() }
     }
 }
