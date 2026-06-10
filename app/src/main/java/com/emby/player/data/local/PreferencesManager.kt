@@ -18,26 +18,26 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class PreferencesManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    private val serverUrlKey = stringPreferencesKey("server_url")
-    private val userIdKey = stringPreferencesKey("user_id")
-    private val tokenKey = stringPreferencesKey("token")
-    private val usernameKey = stringPreferencesKey("username")
+    private val SERVER_URL = stringPreferencesKey("server_url")
+    private val USER_ID = stringPreferencesKey("user_id")
+    private val TOKEN = stringPreferencesKey("token")
+    private val USERNAME = stringPreferencesKey("username")
 
-    val serverUrl: Flow<String?> = context.dataStore.data.map { it[serverUrlKey] }
-    val userId: Flow<String?> = context.dataStore.data.map { it[userIdKey] }
-    val token: Flow<String?> = context.dataStore.data.map { it[tokenKey] }
-    val username: Flow<String?> = context.dataStore.data.map { it[usernameKey] }
+    val serverUrl: Flow<String?> = context.dataStore.data.map { it[SERVER_URL] }
+    val userId: Flow<String?> = context.dataStore.data.map { it[USER_ID] }
+    val token: Flow<String?> = context.dataStore.data.map { it[TOKEN] }
+    val username: Flow<String?> = context.dataStore.data.map { it[USERNAME] }
 
     suspend fun saveLoginInfo(serverUrl: String, userId: String, token: String, username: String) {
         context.dataStore.edit { prefs ->
-            prefs[serverUrlKey] = serverUrl
-            prefs[userIdKey] = userId
-            prefs[tokenKey] = token
-            prefs[usernameKey] = username
+            prefs[SERVER_URL] = serverUrl
+            prefs[USER_ID] = userId
+            prefs[TOKEN] = token
+            prefs[USERNAME] = username
         }
     }
 
-    suspend fun clearLoginInfo() {
+    suspend fun clear() {
         context.dataStore.edit { it.clear() }
     }
 }
