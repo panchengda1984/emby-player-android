@@ -45,7 +45,19 @@ class PlayerViewModel @Inject constructor(
 
             repository.getPlaybackInfo(itemId, userId, token)
                 .onSuccess { playbackInfo ->
-                    _uiState.value = PlayerUiState.Success(playbackInfo)
+                    val mediaSource = playbackInfo.MediaSources.firstOrNull()
+                    if (mediaSource != null) {
+                        var videoUrl = mediaSource.DirectStreamUrl ?: mediaSource.Path
+                        
+                        // 如果是STRM文件，解析真实URL
+                        if (com.emby.player.player.StrmPlayer.isStrmFile(videoUrl)) {
+                            videoUrl = com.emby.player.player.StrmPlayer.parseStrmUrl(videoUrl)
+                        }
+                        
+                        _uiState.value = PlayerUiState.Success(playbackInfo, videoUrl)
+                    } else {
+                        _uiState.value = PlayerUiState.Error("无可用播放源")
+                    }
                 }
                 .onFailure {
                     _uiState.value = PlayerUiState.Error("获取播放信息失败")
@@ -74,6 +86,6 @@ class PlayerViewModel @Inject constructor(
 
 sealed class PlayerUiState {
     object Loading : PlayerUiState()
-    data class Success(val playbackInfo: PlaybackInfo) : PlayerUiState()
+    data class Success(val playbackInfo: PlaybackInfo, val videoUrl: String) : PlayerUiState()
     data class Error(val message: String) : PlayerUiState()
 }

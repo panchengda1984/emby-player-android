@@ -33,42 +33,33 @@ fun PlayerScreen(
             }
         }
         is PlayerUiState.Success -> {
-            val playbackInfo = state.playbackInfo
-            val mediaSource = playbackInfo.MediaSources.firstOrNull()
+            val videoUrl = state.videoUrl
 
-            if (mediaSource != null) {
-                val videoUrl = mediaSource.DirectStreamUrl ?: mediaSource.Path
+            DisposableEffect(Unit) {
+                val exoPlayer = ExoPlayer.Builder(context).build()
+                val mediaItem = MediaItem.fromUri(videoUrl)
+                exoPlayer.setMediaItem(mediaItem)
+                exoPlayer.prepare()
+                exoPlayer.playWhenReady = true
 
-                DisposableEffect(Unit) {
-                    val exoPlayer = ExoPlayer.Builder(context).build()
-                    val mediaItem = MediaItem.fromUri(videoUrl)
-                    exoPlayer.setMediaItem(mediaItem)
-                    exoPlayer.prepare()
-                    exoPlayer.playWhenReady = true
-
-                    exoPlayer.addListener(object : Player.Listener {
-                        override fun onPlaybackStateChanged(state: Int) {
-                            if (state == Player.STATE_READY) {
-                                viewModel.reportPlaybackStart(exoPlayer.currentPosition * 10000)
-                            }
+                exoPlayer.addListener(object : Player.Listener {
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        if (playbackState == Player.STATE_READY) {
+                            viewModel.reportPlaybackStart(exoPlayer.currentPosition * 10000)
                         }
-                    })
-
-                    onDispose {
-                        viewModel.reportPlaybackStopped(exoPlayer.currentPosition * 10000)
-                        exoPlayer.release()
                     }
-                }
+                })
 
-                VideoPlayer(
-                    videoUrl = videoUrl,
-                    onBackClick = onBackClick
-                )
-            } else {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("无可用播放源", color = MaterialTheme.colorScheme.error)
+                onDispose {
+                    viewModel.reportPlaybackStopped(exoPlayer.currentPosition * 10000)
+                    exoPlayer.release()
                 }
             }
+
+            VideoPlayer(
+                videoUrl = videoUrl,
+                onBackClick = onBackClick
+            )
         }
         is PlayerUiState.Error -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
