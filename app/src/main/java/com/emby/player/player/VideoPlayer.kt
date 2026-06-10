@@ -8,10 +8,10 @@ enum class PlayerType {
 
 interface VideoPlayer {
     fun prepare(url: String)
-    fun play()
+    fun start()
     fun pause()
-    fun seekTo(position: Long)
     fun release()
+    fun seekTo(position: Long)
     fun getCurrentPosition(): Long
     fun getDuration(): Long
     fun isPlaying(): Boolean

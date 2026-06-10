@@ -28,7 +28,6 @@ object NetworkModule {
             level = HttpLoggingInterceptor.Level.BODY
         }
 
-        // 信任所有证书（支持自签名HTTPS）
         val trustManager = object : X509TrustManager {
             override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
             override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
@@ -46,7 +45,7 @@ object NetworkModule {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
-            .followRedirects(true)  // 支持302重定向
+            .followRedirects(true)
             .followSslRedirects(true)
             .build()
     }

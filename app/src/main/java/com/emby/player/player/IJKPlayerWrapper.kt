@@ -1,12 +1,11 @@
 package com.emby.player.player
 
 import android.content.Context
-import android.view.Surface
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 
-class IJKPlayerWrapper(private val context: Context) : IPlayer {
+class IJKPlayerWrapper(private val context: Context) : VideoPlayer {
     
-    private var ijkPlayer: IjkMediaPlayer? = null
+    private var player: IjkMediaPlayer? = null
 
     init {
         IjkMediaPlayer.loadLibrariesOnce(null)
@@ -14,47 +13,47 @@ class IJKPlayerWrapper(private val context: Context) : IPlayer {
     }
 
     override fun prepare(url: String) {
-        ijkPlayer = IjkMediaPlayer().apply {
+        player = IjkMediaPlayer().apply {
             setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1)
-            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1)
-            setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1)
+            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 0)
+            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", IjkMediaPlayer.SDL_FCC_RV32.toLong())
+            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1)
+            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0)
             setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0)
-            setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "reconnect", 1)
+            setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48)
             dataSource = url
             prepareAsync()
         }
     }
 
     override fun start() {
-        ijkPlayer?.start()
+        player?.start()
     }
 
     override fun pause() {
-        ijkPlayer?.pause()
+        player?.pause()
     }
 
     override fun release() {
-        ijkPlayer?.release()
-        ijkPlayer = null
+        player?.release()
+        player = null
     }
 
     override fun seekTo(position: Long) {
-        ijkPlayer?.seekTo(position)
+        player?.seekTo(position)
     }
 
     override fun getCurrentPosition(): Long {
-        return ijkPlayer?.currentPosition ?: 0L
+        return player?.currentPosition ?: 0
     }
 
     override fun getDuration(): Long {
-        return ijkPlayer?.duration ?: 0L
+        return player?.duration ?: 0
     }
 
     override fun isPlaying(): Boolean {
-        return ijkPlayer?.isPlaying ?: false
+        return player?.isPlaying ?: false
     }
 
-    fun setSurface(surface: Surface?) {
-        ijkPlayer?.setSurface(surface)
-    }
+    fun getPlayer(): IjkMediaPlayer? = player
 }

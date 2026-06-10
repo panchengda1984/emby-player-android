@@ -47,14 +47,9 @@ class PlayerViewModel @Inject constructor(
                 .onSuccess { playbackInfo ->
                     val mediaSource = playbackInfo.MediaSources.firstOrNull()
                     if (mediaSource != null) {
-                        var videoUrl = mediaSource.DirectStreamUrl ?: mediaSource.Path
-                        
-                        // 如果是STRM文件，解析真实URL
-                        if (com.emby.player.player.StrmPlayer.isStrmFile(videoUrl)) {
-                            videoUrl = com.emby.player.player.StrmPlayer.parseStrmUrl(videoUrl)
-                        }
-                        
-                        _uiState.value = PlayerUiState.Success(playbackInfo, videoUrl)
+                        val videoUrl = mediaSource.DirectStreamUrl ?: mediaSource.Path
+                        val resolvedUrl = com.emby.player.utils.StrmParser.resolvePlayUrl(videoUrl)
+                        _uiState.value = PlayerUiState.Success(playbackInfo, resolvedUrl)
                     } else {
                         _uiState.value = PlayerUiState.Error("无可用播放源")
                     }
