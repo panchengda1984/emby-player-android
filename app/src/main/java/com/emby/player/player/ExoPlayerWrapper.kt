@@ -5,7 +5,6 @@ import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 
 class ExoPlayerWrapper(private val context: Context) : VideoPlayer {
-    
     private var player: ExoPlayer? = null
 
     override fun prepare(url: String) {
@@ -23,26 +22,24 @@ class ExoPlayerWrapper(private val context: Context) : VideoPlayer {
         player?.pause()
     }
 
-    override fun release() {
-        player?.release()
-        player = null
+    override fun stop() {
+        player?.stop()
     }
 
     override fun seekTo(position: Long) {
         player?.seekTo(position)
     }
 
-    override fun getCurrentPosition(): Long {
-        return player?.currentPosition ?: 0
+    override fun release() {
+        player?.release()
+        player = null
     }
 
-    override fun getDuration(): Long {
-        return player?.duration ?: 0
-    }
+    override fun getCurrentPosition(): Long = player?.currentPosition ?: 0L
 
-    override fun isPlaying(): Boolean {
-        return player?.isPlaying ?: false
-    }
+    override fun getDuration(): Long = player?.duration ?: 0L
+
+    override fun isPlaying(): Boolean = player?.isPlaying ?: false
 
     fun getPlayer(): ExoPlayer? = player
 }

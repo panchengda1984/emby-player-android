@@ -1,17 +1,18 @@
 package com.emby.player.player
 
 enum class PlayerType {
-    EXOPLAYER,
-    IJKPLAYER,
-    SYSTEM
+    EXO_PLAYER,
+    IJK_PLAYER,
+    SYSTEM_PLAYER
 }
 
 interface VideoPlayer {
     fun prepare(url: String)
     fun start()
     fun pause()
-    fun release()
+    fun stop()
     fun seekTo(position: Long)
+    fun release()
     fun getCurrentPosition(): Long
     fun getDuration(): Long
     fun isPlaying(): Boolean

@@ -15,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
     private val repository: EmbyRepository,
+    private val strmResolver: com.emby.player.data.repository.StrmResolver,
     private val preferencesManager: com.emby.player.data.local.PreferencesManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -47,8 +48,8 @@ class PlayerViewModel @Inject constructor(
                 .onSuccess { playbackInfo ->
                     val mediaSource = playbackInfo.MediaSources.firstOrNull()
                     if (mediaSource != null) {
-                        val videoUrl = mediaSource.DirectStreamUrl ?: mediaSource.Path
-                        val resolvedUrl = com.emby.player.utils.StrmParser.resolvePlayUrl(videoUrl)
+                        val originalUrl = mediaSource.DirectStreamUrl ?: mediaSource.Path
+                        val resolvedUrl = strmResolver.resolveUrl(originalUrl)
                         _uiState.value = PlayerUiState.Success(playbackInfo, resolvedUrl)
                     } else {
                         _uiState.value = PlayerUiState.Error("无可用播放源")

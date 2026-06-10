@@ -1,10 +1,10 @@
 package com.emby.player.player
 
 import android.content.Context
+import android.view.Surface
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 
 class IJKPlayerWrapper(private val context: Context) : VideoPlayer {
-    
     private var player: IjkMediaPlayer? = null
 
     init {
@@ -15,10 +15,7 @@ class IJKPlayerWrapper(private val context: Context) : VideoPlayer {
     override fun prepare(url: String) {
         player = IjkMediaPlayer().apply {
             setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1)
-            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 0)
-            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", IjkMediaPlayer.SDL_FCC_RV32.toLong())
-            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1)
-            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0)
+            setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1)
             setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0)
             setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48)
             dataSource = url
@@ -34,25 +31,27 @@ class IJKPlayerWrapper(private val context: Context) : VideoPlayer {
         player?.pause()
     }
 
-    override fun release() {
-        player?.release()
-        player = null
+    override fun stop() {
+        player?.stop()
     }
 
     override fun seekTo(position: Long) {
         player?.seekTo(position)
     }
 
-    override fun getCurrentPosition(): Long {
-        return player?.currentPosition ?: 0
+    override fun release() {
+        player?.release()
+        player = null
     }
 
-    override fun getDuration(): Long {
-        return player?.duration ?: 0
-    }
+    override fun getCurrentPosition(): Long = player?.currentPosition ?: 0L
 
-    override fun isPlaying(): Boolean {
-        return player?.isPlaying ?: false
+    override fun getDuration(): Long = player?.duration ?: 0L
+
+    override fun isPlaying(): Boolean = player?.isPlaying ?: false
+
+    fun setSurface(surface: Surface?) {
+        player?.setSurface(surface)
     }
 
     fun getPlayer(): IjkMediaPlayer? = player
