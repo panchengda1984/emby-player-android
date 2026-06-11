@@ -1,9 +1,9 @@
 package com.emby.player.player
 
 enum class PlayerType {
-    EXO_PLAYER,
-    IJK_PLAYER,
-    SYSTEM_PLAYER
+    EXOPLAYER,
+    IJKPLAYER,
+    SYSTEM
 }
 
 interface IPlayer {
