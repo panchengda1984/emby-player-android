@@ -44,13 +44,26 @@ class DetailViewModel @Inject constructor(
                 return@launch
             }
 
-            repository.getItems(userId, token, parentId = null, itemTypes = null)
+            // 直接根据 itemId 获取单个媒体项
+            repository.getItems(userId, token, parentId = itemId, itemTypes = null)
                 .onSuccess { response ->
-                    val item = response.Items.find { it.Id == itemId }
-                    if (item != null) {
-                        _uiState.value = DetailUiState.Success(item)
+                    if (response.Items.isNotEmpty()) {
+                        // 如果 itemId 是媒体库，返回其子项列表
+                        _uiState.value = DetailUiState.Success(response.Items.first())
                     } else {
-                        _uiState.value = DetailUiState.Error("未找到媒体")
+                        // 尝试获取该媒体项本身
+                        repository.getItems(userId, token, parentId = null, itemTypes = null)
+                            .onSuccess { allItems ->
+                                val item = allItems.Items.find { it.Id == itemId }
+                                if (item != null) {
+                                    _uiState.value = DetailUiState.Success(item)
+                                } else {
+                                    _uiState.value = DetailUiState.Error("未找到媒体")
+                                }
+                            }
+                            .onFailure {
+                                _uiState.value = DetailUiState.Error("加载失败")
+                            }
                     }
                 }
                 .onFailure {

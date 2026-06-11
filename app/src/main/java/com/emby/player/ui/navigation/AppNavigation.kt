@@ -32,7 +32,21 @@ fun AppNavigation() {
         composable(Screen.Home.route) {
             HomeScreen(
                 onItemClick = { itemId ->
+                    navController.navigate(Screen.Library.createRoute(itemId))
+                }
+            )
+        }
+
+        composable(
+            route = Screen.Library.route,
+            arguments = listOf(navArgument("libraryId") { type = NavType.StringType })
+        ) {
+            com.emby.player.ui.screen.library.LibraryScreen(
+                onItemClick = { itemId ->
                     navController.navigate(Screen.Detail.createRoute(itemId))
+                },
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }
