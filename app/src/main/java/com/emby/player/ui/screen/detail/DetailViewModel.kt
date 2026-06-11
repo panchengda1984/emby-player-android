@@ -44,17 +44,17 @@ class DetailViewModel @Inject constructor(
                 return@launch
             }
 
-            // 直接根据 itemId 获取单个媒体项
-            repository.getItems(userId, token, parentId = itemId, itemTypes = null)
+            // 先获取媒体库下的项目
+            repository.getItems(userId, token, parentId = itemId, itemTypes = "Movie,Series,Episode")
                 .onSuccess { response ->
                     if (response.Items.isNotEmpty()) {
-                        // 如果 itemId 是媒体库，返回其子项列表
+                        // 如果是媒体库，显示第一个媒体项
                         _uiState.value = DetailUiState.Success(response.Items.first())
                     } else {
-                        // 尝试获取该媒体项本身
+                        // 如果没有子项，尝试直接获取该媒体项信息
                         repository.getItems(userId, token, parentId = null, itemTypes = null)
-                            .onSuccess { allItems ->
-                                val item = allItems.Items.find { it.Id == itemId }
+                            .onSuccess { allResponse ->
+                                val item = allResponse.Items.find { it.Id == itemId }
                                 if (item != null) {
                                     _uiState.value = DetailUiState.Success(item)
                                 } else {
@@ -62,12 +62,12 @@ class DetailViewModel @Inject constructor(
                                 }
                             }
                             .onFailure {
-                                _uiState.value = DetailUiState.Error("加载失败")
+                                _uiState.value = DetailUiState.Error("加载失败: ${it.message}")
                             }
                     }
                 }
                 .onFailure {
-                    _uiState.value = DetailUiState.Error("加载失败")
+                    _uiState.value = DetailUiState.Error("加载失败: ${it.message}")
                 }
         }
     }

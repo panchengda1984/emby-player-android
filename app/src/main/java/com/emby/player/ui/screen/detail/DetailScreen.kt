@@ -9,8 +9,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.emby.player.data.model.MediaItem
@@ -56,14 +58,20 @@ private fun DetailContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(item.Name) },
+                title = { Text(item.Name, maxLines = 1) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Text("←")
+                        Text("←", style = MaterialTheme.typography.headlineMedium)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Black,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
             )
-        }
+        },
+        containerColor = Color.Black
     ) { padding ->
         Column(
             modifier = Modifier
@@ -78,59 +86,63 @@ private fun DetailContent(
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(220.dp),
+                        .height(240.dp),
                     contentScale = ContentScale.Crop
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // 标题和信息
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 Text(
                     text = item.Name,
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = Color.White
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     item.ProductionYear?.let {
-                        Text("$it", style = MaterialTheme.typography.bodyMedium)
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("$it", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+                        Spacer(modifier = Modifier.width(12.dp))
                     }
                     item.CommunityRating?.let {
-                        Text("⭐ $it", style = MaterialTheme.typography.bodyMedium)
+                        Text("⭐ %.1f".format(it), style = MaterialTheme.typography.bodyMedium, color = Color(0xFFFFD700))
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 // 播放按钮
                 Button(
                     onClick = { onPlayClick(item.Id) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
                 ) {
-                    Text("播放")
+                    Text("▶ 播放", style = MaterialTheme.typography.titleMedium)
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 // 类型
                 item.Genres?.let { genres ->
                     if (genres.isNotEmpty()) {
-                        Text("类型", style = MaterialTheme.typography.titleMedium)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(genres.joinToString(", "), style = MaterialTheme.typography.bodyMedium)
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("类型", style = MaterialTheme.typography.titleMedium, color = Color.White)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(genres.joinToString(" · "), style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+                        Spacer(modifier = Modifier.height(20.dp))
                     }
                 }
 
                 // 简介
                 item.Overview?.let { overview ->
-                    Text("简介", style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(overview, style = MaterialTheme.typography.bodyMedium)
+                    Text("简介", style = MaterialTheme.typography.titleMedium, color = Color.White)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(overview, style = MaterialTheme.typography.bodyMedium, color = Color.Gray, lineHeight = 24.sp)
                 }
             }
         }
