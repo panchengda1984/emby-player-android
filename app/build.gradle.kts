@@ -72,15 +72,11 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-
-    // ExoPlayer
+    // Media3 - ExoPlayer
     implementation("androidx.media3:media3-exoplayer:1.2.0")
     implementation("androidx.media3:media3-ui:1.2.0")
+    implementation("androidx.media3:media3-exoplayer-dash:1.2.0")
     implementation("androidx.media3:media3-exoplayer-hls:1.2.0")
-
-    // IJKPlayer
-    implementation("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
-    implementation("tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8")
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.5.0")

@@ -32,7 +32,6 @@ class PreferencesManager @Inject constructor(
     
     val playerType: Flow<PlayerType> = context.dataStore.data.map {
         when (it[PLAYER_TYPE]) {
-            "IJKPLAYER" -> PlayerType.IJKPLAYER
             "SYSTEM" -> PlayerType.SYSTEM
             else -> PlayerType.EXOPLAYER
         }

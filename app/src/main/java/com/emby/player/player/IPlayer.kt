@@ -2,7 +2,6 @@ package com.emby.player.player
 
 enum class PlayerType {
     EXOPLAYER,
-    IJKPLAYER,
     SYSTEM
 }
 
