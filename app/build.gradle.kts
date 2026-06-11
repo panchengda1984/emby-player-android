@@ -78,6 +78,8 @@ dependencies {
     implementation("androidx.media3:media3-ui:1.2.0")
     implementation("androidx.media3:media3-exoplayer-hls:1.2.0")
 
+    // IJKPlayer - 移除，暂时只使用 ExoPlayer
+
     // Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
 
