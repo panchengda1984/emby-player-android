@@ -78,7 +78,9 @@ dependencies {
     implementation("androidx.media3:media3-ui:1.2.0")
     implementation("androidx.media3:media3-exoplayer-hls:1.2.0")
 
-    // IJKPlayer - 移除，暂时只使用 ExoPlayer
+    // IJKPlayer - 移除，使用 ExoPlayer
+    // implementation("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
+    // implementation("tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8")
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
